@@ -5,6 +5,9 @@
 
 #include "hardwareAPI.h"
 
+#define MAX_NUMBER_OF_ELEVATORS (5)
+#define MAX_TOP_FLOOR (6)
+
 void * ElevatorController(void *);
 void * Master(void *);
 
