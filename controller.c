@@ -10,10 +10,11 @@ void * Master(void *);
 
 int main(int argc, char **argv)
 {
-    pthread_t elevator_controller_thread, master_thread;
+    /* Declare variables. */
     char * hostname;
     int port;
 
+    /* Parse command line parameters. */
     if (argc != 3)
     {
         fprintf(stderr, "Usage: %s host-name port\n", argv[0]);
@@ -28,8 +29,11 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
+    /* Connect to "hardware". */
     initHW(hostname, port);
 
+    /* Create threads. */
+    pthread_t elevator_controller_thread, master_thread;
     if (pthread_create(&elevator_controller_thread, NULL, ElevatorController, (void *) 0) != 0)
     {
         perror("pthread_create");
