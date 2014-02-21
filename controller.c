@@ -49,6 +49,8 @@ int main(int argc, char **argv)
     }
     (void) pthread_join(elevator_controller_thread, NULL);
     (void) pthread_join(master_thread, NULL);
+
+    return 0;
 }
 
 void * ElevatorController(void *p)

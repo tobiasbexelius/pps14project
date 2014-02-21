@@ -12,12 +12,10 @@
 #ifndef __HARDWARE_API_H
 #define __HARDWARE_API_H
 
-//
-// Init procedure, which establishes the channel.
-// The same socket is used for both directions.
+/* Init procedure, which establishes the channel. */
+/* The same socket is used for both directions. */
 void initHW(char *hostname, int port);
 
-//
 typedef enum {
   FloorButton = 0,
   CabinButton,
@@ -30,14 +28,13 @@ typedef enum {
   GoingDown = -1
 } FloorButtonType;
 
-//
 typedef struct {
   int floor;
   FloorButtonType type;
 } FloorButtonPressDesc;
 typedef struct {
   int cabin;
-  int floor;			// or 32000 for emergency stop
+  int floor; /* or 32000 for emergency stop */
 } CabinButtonPressDesc;
 typedef struct {
   int cabin;
@@ -47,10 +44,9 @@ typedef struct {
   double speed;
 } SpeedDesc;
 typedef struct {
-  // static memory - will be scrambled by the next waitForEvent;
+  /* static memory - will be scrambled by the next waitForEvent; */
   char *str;
 } ErrorDesc;
-//
 typedef union {
   FloorButtonPressDesc fbp;
   CabinButtonPressDesc cbp;
@@ -59,13 +55,11 @@ typedef union {
   ErrorDesc e;
 } EventDesc;
 
-// 
-// Event watcher: blocks until an event occurs, then returns its type
-// and fills the descriptor. There must not be more than one
-// 'waitForEvent()' running simultaneously;
+/* Event watcher: blocks until an event occurs, then returns its type */
+/* and fills the descriptor. There must not be more than one */
+/* 'waitForEvent()' running simultaneously; */
 EventType waitForEvent(EventDesc *event);
 
-//
 typedef enum {
   DoorOpen = 1,
   DoorStop = 0,
@@ -77,17 +71,15 @@ typedef enum {
   MotorDown = -1
 } MotorAction;
 
-//
-// Primitives controlling the hardware (motors, doors & status
-// panels), as well as for state enquiry. These primitives are
-// non-blocking. There must not be more than one of these procedures
-// running simultaneously;
+/* Primitives controlling the hardware (motors, doors & status */
+/* panels), as well as for state enquiry. These primitives are */
+/* non-blocking. There must not be more than one of these procedures */
+/* running simultaneously; */
 void handleDoor(int cabin, DoorAction action);
 void handleMotor(int cabin, MotorAction action);
 void handleScale(int cabin, int floor);
 void whereIs(int cabin);
 void getSpeed();
-//
 void terminate();
 
 #endif
