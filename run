@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+java -classpath classes elevator.Elevators -tcp $@ &
+while ! netstat -tln | grep -q ":4711"; do sleep 1; done
+./controller localhost 4711
