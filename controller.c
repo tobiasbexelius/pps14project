@@ -5,12 +5,12 @@
 
 #include "hardwareAPI.h"
 
-void * ctlProc(void *);
-void * evProc(void *);
+void * ElevatorController(void *);
+void * Master(void *);
 
 int main(int argc, char **argv)
 {
-    pthread_t ctlThr, evThr;
+    pthread_t elevator_controller_thread, master_thread;
     char * hostname;
     int port;
 
@@ -30,21 +30,21 @@ int main(int argc, char **argv)
 
     initHW(hostname, port);
 
-    if (pthread_create(&ctlThr, NULL, ctlProc, (void *) 0) != 0)
+    if (pthread_create(&elevator_controller_thread, NULL, ElevatorController, (void *) 0) != 0)
     {
         perror("pthread_create");
         exit(-1);
     }
-    if (pthread_create(&evThr, NULL, evProc, (void *) 0) != 0)
+    if (pthread_create(&master_thread, NULL, Master, (void *) 0) != 0)
     {
         perror("pthread_create");
         exit(-1);
     }
-    (void) pthread_join(ctlThr, NULL);
-    (void) pthread_join(evThr, NULL);
+    (void) pthread_join(elevator_controller_thread, NULL);
+    (void) pthread_join(master_thread, NULL);
 }
 
-void * ctlProc(void *p)
+void * ElevatorController(void *p)
 {
     while(1)
     {
@@ -54,7 +54,7 @@ void * ctlProc(void *p)
     terminate();
 }
 
-void * evProc(void *p)
+void * Master(void *p)
 {
     EventType e;
     EventDesc ed;
