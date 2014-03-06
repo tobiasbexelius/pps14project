@@ -10,6 +10,6 @@ fi
 number_of_elevators=$1
 top_floor=$2
 
-java -classpath classes elevator.Elevators -tcp -number $number_of_elevators -top $top_floor &
+java -classpath lib/elevator.jar elevator.Elevators -tcp -number $number_of_elevators -top $top_floor &
 while ! netstat -tln | grep -q ":4711"; do sleep 1; done
 ./controller localhost 4711 $number_of_elevators $top_floor
