@@ -2,6 +2,14 @@
 
 set -e
 
-java -classpath classes elevator.Elevators -tcp $@ &
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 number_of_elevators top_floor" >&2
+    exit 1
+fi
+
+number_of_elevators=$1
+top_floor=$2
+
+java -classpath classes elevator.Elevators -tcp -number $number_of_elevators -top $top_floor &
 while ! netstat -tln | grep -q ":4711"; do sleep 1; done
-./controller localhost 4711
+./controller localhost 4711 $number_of_elevators $top_floor

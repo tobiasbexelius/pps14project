@@ -11,16 +11,18 @@
 void * ElevatorController(void *);
 void * Master(void *);
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
     /* Declare variables. */
     char * hostname;
     int port;
+    int number_of_elevators;
+    int top_floor;
 
     /* Parse command line parameters. */
-    if (argc != 3)
+    if (argc != 5)
     {
-        fprintf(stderr, "Usage: %s host-name port\n", argv[0]);
+        fprintf(stderr, "Usage: %s host-name port number_of_elevators top_floor\n", argv[0]);
         fflush(stderr);
         exit(-1);
     }
@@ -28,6 +30,20 @@ int main(int argc, char **argv)
     if ((port = atoi(argv[2])) <= 0)
     {
         fprintf(stderr, "Bad port number: %s\n", argv[2]);
+        fflush(stderr);
+        exit(-1);
+    }
+    number_of_elevators = atoi(argv[3]);
+    if (number_of_elevators <= 0 || number_of_elevators > MAX_NUMBER_OF_ELEVATORS)
+    {
+        fprintf(stderr, "Bad number of elevators: %s\n", argv[3]);
+        fflush(stderr);
+        exit(-1);
+    }
+    top_floor = atoi(argv[4]);
+    if (top_floor <= 0 || top_floor > MAX_TOP_FLOOR)
+    {
+        fprintf(stderr, "Bad top floor: %s\n", argv[4]);
         fflush(stderr);
         exit(-1);
     }
