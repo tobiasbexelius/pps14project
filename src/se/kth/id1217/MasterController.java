@@ -5,22 +5,19 @@ import java.util.List;
 
 public class MasterController implements HardwareListener {
 
-    HardwareController hwc;
-    private int numElevators;
+    private final HardwareController hwc;
+    private final int numElevators;
     private List<ElevatorController> elevatorControllers;
 
-    public MasterController(int numElevators, double speed) throws Exception {
+    public MasterController(HardwareController hwc, int numElevators)
+            throws Exception {
+        this.hwc = hwc;
         this.numElevators = numElevators;
-        SocketHardwareController shwc = new SocketHardwareController();
-        shwc.connect("localhost", 4711);
-        shwc.addHardwareListener(this);
-        this.hwc = shwc;
 
         elevatorControllers = new ArrayList<ElevatorController>(numElevators);
         for (int i = 0; i < numElevators; i++) {
-            ElevatorController controller = new ElevatorController(hwc, i, 0, speed);
-            elevatorControllers
-                    .add(i, controller);
+            ElevatorController controller = new ElevatorController(hwc, i + 1);
+            elevatorControllers.add(i, controller);
             new Thread(controller).start();
         }
     }

@@ -4,21 +4,22 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class ElevatorController implements Runnable {
 
+    private static final int DEFAULT_POSITION = 0;
+    private static final double DEFAULT_SPEED = 0.000157;
     private static final double DELTA = 0.01;
     private static final int CAPACITY = 50;
 
     private double speed;
     private double position;
-    private int id;
+    private final int id;
     private HardwareController hwc;
     private ArrayBlockingQueue<Integer> commandQueue; // TODO stack?
 
-    public ElevatorController(HardwareController hwc, int id, double position,
-            double speed) {
+    public ElevatorController(HardwareController hwc, int id) {
         this.hwc = hwc;
         this.id = id;
-        this.position = position;
-        this.speed = speed;
+        this.position = DEFAULT_POSITION;
+        this.speed = DEFAULT_SPEED;
         commandQueue = new ArrayBlockingQueue<Integer>(CAPACITY);
     }
 
@@ -65,7 +66,6 @@ public class ElevatorController implements Runnable {
         }
 
         hwc.handleDoor(id, DoorAction.DoorOpen);
-
     }
 
     public void setPosition(double position) {
