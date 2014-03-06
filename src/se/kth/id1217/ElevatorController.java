@@ -4,23 +4,69 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class ElevatorController implements Runnable {
 
-    private static final int DEFAULT_POSITION = 0;
-    private static final double DEFAULT_SPEED = 0.000157;
-    private static final double DELTA = 0.01;
     private static final int CAPACITY = 50;
 
-    private double speed;
-    private double position;
-    private final int id;
-    private HardwareController hwc;
     private ArrayBlockingQueue<Integer> commandQueue; // TODO stack?
+    private final Elevator elevator;
+    private final HardwareController hwc;
 
-    public ElevatorController(HardwareController hwc, int id) {
+    public ElevatorController(HardwareController hwc, Elevator elevator) {
         this.hwc = hwc;
-        this.id = id;
-        this.position = DEFAULT_POSITION;
-        this.speed = DEFAULT_SPEED;
+        this.elevator = elevator;
+
         commandQueue = new ArrayBlockingQueue<Integer>(CAPACITY);
+    }
+
+    public void addCommand(int floor) {
+        commandQueue.add(floor);
+    }
+
+    private void closeDoor() {
+        hwc.handleDoor(elevator.getId(), DoorAction.DoorClose);
+    }
+
+    private void goDown() {
+        hwc.handleMotor(elevator.getId(), MotorAction.MotorDown);
+    }
+
+    private void goToFloor(int floor) {
+        if (elevator.isAtFloor(floor)) {
+            return;
+        }
+
+        closeDoor();
+        // TODO vänta på att dörrarna stängs
+        if (floor > elevator.getPosition()) {
+            goUp();
+        } else {
+            goDown();
+        }
+
+        boolean done = false;
+        while (!done) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            updatePosition();
+            updateScale();
+            if (elevator.isAtFloor(floor)) {
+                done = true;
+                stop();
+            }
+        }
+
+        openDoor();
+    }
+
+    private void goUp() {
+        hwc.handleMotor(elevator.getId(), MotorAction.MotorUp);
+    }
+
+    private void openDoor() {
+        hwc.handleDoor(elevator.getId(), DoorAction.DoorOpen);
     }
 
     @Override
@@ -34,45 +80,16 @@ public class ElevatorController implements Runnable {
         }
     }
 
-    public void addCommand(int floor) {
-        commandQueue.add(floor);
+    private void stop() {
+        hwc.handleMotor(elevator.getId(), MotorAction.MotorStop);
     }
 
-    private void goToFloor(int floor) {
-        double destination = (double) floor;
-        if (Math.abs(position - destination) < DELTA)
-            return;
-
-        hwc.handleDoor(id, DoorAction.DoorClose);
-        // TODO vänta på att dörrarna stängs
-        MotorAction action = ((double) destination) < position ? MotorAction.MotorDown
-                : MotorAction.MotorUp;
-        hwc.handleMotor(id, action);
-
-        boolean done = false;
-        while (!done) {
-            try {
-                Thread.sleep(1);
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            hwc.whereIs(id);
-            hwc.handleScale(id, (int) position);
-            if (Math.abs(position - destination) < DELTA) {
-                done = true;
-                hwc.handleMotor(id, MotorAction.MotorStop);
-            }
-        }
-
-        hwc.handleDoor(id, DoorAction.DoorOpen);
+    private void updatePosition() {
+        hwc.whereIs(elevator.getId());
     }
 
-    public void setPosition(double position) {
-        this.position = position;
+    private void updateScale() {
+        hwc.handleScale(elevator.getId(), elevator.getFloor());
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
 }

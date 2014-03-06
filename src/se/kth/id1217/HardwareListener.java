@@ -1,13 +1,13 @@
 package se.kth.id1217;
 
 public interface HardwareListener {
-    public void onFloorButton(FloorButtonPressDesc ed);
+    public void onFloorButton(FloorButtonPressDesc fbpd);
 
-    public void onCabinButton(CabinButtonPressDesc ed);
+    public void onCabinButton(CabinButtonPressDesc cbpd);
 
-    public void onPosition(CabinPositionDesc ed);
+    public void onPosition(CabinPositionDesc cpd);
 
-    public void onSpeed(SpeedDesc ed);
+    public void onSpeed(SpeedDesc sd);
 
     public void onError(ErrorDesc ed);
 }
