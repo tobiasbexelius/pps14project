@@ -1,6 +1,5 @@
 package se.kth.id1217;
 
-import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ElevatorController implements Runnable {
@@ -12,7 +11,7 @@ public class ElevatorController implements Runnable {
     private double position;
     private int id;
     private HardwareController hwc;
-    private Queue<Integer> commandQueue; // TODO stack?
+    private ArrayBlockingQueue<Integer> commandQueue; // TODO stack?
 
     public ElevatorController(HardwareController hwc, int id, double position,
             double speed) {
@@ -25,9 +24,12 @@ public class ElevatorController implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            int command = commandQueue.poll();
-            goToFloor(command);
+        try {
+            while (true) {
+                int command = commandQueue.take();
+                goToFloor(command);
+            }
+        } catch (Exception e) {
         }
     }
 
