@@ -20,7 +20,9 @@ public class ElevatorController implements Runnable {
     }
 
     public void addCommand(int floor) {
-        commandQueue.add(floor);
+        if (!commandQueue.contains(floor)) {
+            commandQueue.add(floor);
+        }
     }
 
     private void closeDoor() {
@@ -76,13 +78,15 @@ public class ElevatorController implements Runnable {
 
             updatePosition();
             updateScale();
-            if (elevator.isAtFloor(floor)) {
+            if (elevator.isAtFloor()
+                    && commandQueue.contains((int) Math.round(elevator
+                            .getPosition()))) {
+                commandQueue.remove((int) Math.round(elevator.getPosition()));
                 done = true;
                 stop();
+                openDoor();
             }
         }
-
-        openDoor();
     }
 
     private void goUp() {
@@ -102,12 +106,11 @@ public class ElevatorController implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (true) {
-                int command = commandQueue.take();
+        while (true) {
+            if (commandQueue.peek() != null) {
+                int command = commandQueue.peek();
                 goToFloor(command);
             }
-        } catch (Exception e) {
         }
     }
 
