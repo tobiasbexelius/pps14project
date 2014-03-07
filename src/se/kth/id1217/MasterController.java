@@ -18,6 +18,7 @@ public class MasterController implements HardwareListener {
                 numberOfElevators);
         for (int i = 0; i < numberOfElevators; i++) {
             Elevator elevator = new Elevator(i+1);
+            elevator.openDoor();
             elevators.add(i, elevator);
 
             ElevatorController controller = new ElevatorController(hwc,

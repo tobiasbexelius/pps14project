@@ -22,6 +22,9 @@ public class Main {
         // Attach master controller
         MasterController mc = new MasterController(shwc, numberOfElevators);
         shwc.addHardwareListener(mc);
+
+        // Open all doors
+        shwc.handleDoor(0, DoorAction.DoorOpen);
     }
 
 }
