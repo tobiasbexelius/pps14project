@@ -84,6 +84,9 @@ public class ElevatorController implements Runnable {
             hwc.handleDoor(elevator.getId(), DoorAction.DoorOpen);
             waitForDoor();
             elevator.openDoor();
+
+            // Keep door open for a while
+            waitForDoor();
         }
     }
 
