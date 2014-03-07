@@ -1,4 +1,8 @@
+*.aux
 *.class
+*.log
 *.o
+*.out
+*.pdf
 controller
 test-hwAPI
