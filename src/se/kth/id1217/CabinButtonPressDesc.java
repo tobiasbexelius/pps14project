@@ -1,6 +1,7 @@
 package se.kth.id1217;
 
 public class CabinButtonPressDesc {
+    private static final int EMERGENCY_STOP = 32000;
     private final int cabin;
     private final int floor;
 
@@ -15,6 +16,10 @@ public class CabinButtonPressDesc {
 
     public int getFloor() {
         return floor;
+    }
+
+    public boolean isEmergencyStop() {
+        return floor == EMERGENCY_STOP;
     }
 
 }

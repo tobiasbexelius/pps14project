@@ -9,12 +9,14 @@ public class ElevatorController implements Runnable {
     private ArrayBlockingQueue<Integer> commandQueue;
     private final Elevator elevator;
     private final HardwareController hwc;
+    private boolean emergencyStop;
 
     public ElevatorController(HardwareController hwc, Elevator elevator) {
         this.hwc = hwc;
         this.elevator = elevator;
 
         commandQueue = new ArrayBlockingQueue<Integer>(CAPACITY);
+        emergencyStop = false;
     }
 
     public void addCommand(int floor) {
@@ -44,6 +46,8 @@ public class ElevatorController implements Runnable {
     }
 
     private void goToFloor(int floor) {
+        emergencyStop = false;
+
         if (elevator.isAtFloor(floor)) {
             return;
         }
@@ -58,6 +62,12 @@ public class ElevatorController implements Runnable {
 
         boolean done = false;
         while (!done) {
+            if (emergencyStop) {
+                stop();
+                emergencyStop = false;
+                return;
+            }
+
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
@@ -111,6 +121,11 @@ public class ElevatorController implements Runnable {
 
     private void updateScale() {
         hwc.handleScale(elevator.getId(), elevator.getFloor());
+    }
+
+    public void emergencyStop() {
+        emergencyStop = true;
+        commandQueue.clear();
     }
 
 }

@@ -9,7 +9,8 @@ public class MasterController implements HardwareListener {
     private final List<Elevator> elevators;
     private final List<ElevatorController> elevatorControllers;
 
-    public MasterController(HardwareController hwc, int numberOfElevators) throws Exception {
+    public MasterController(HardwareController hwc, int numberOfElevators)
+            throws Exception {
         this.hwc = hwc;
 
         // Create elevators and controllers
@@ -17,7 +18,7 @@ public class MasterController implements HardwareListener {
         elevatorControllers = new ArrayList<ElevatorController>(
                 numberOfElevators);
         for (int i = 0; i < numberOfElevators; i++) {
-            Elevator elevator = new Elevator(i+1);
+            Elevator elevator = new Elevator(i + 1);
             elevator.openDoor();
             elevators.add(i, elevator);
 
@@ -34,8 +35,12 @@ public class MasterController implements HardwareListener {
         System.err.printf("Cabin button pressed: cabin=%s floor=%d \n",
                 cbpd.getCabin(), cbpd.getFloor());
         System.err.flush();
-        elevatorControllers.get(cbpd.getCabin() - 1)
-                .addCommand(cbpd.getFloor());
+        ElevatorController ec = elevatorControllers.get(cbpd.getCabin() - 1);
+        if (cbpd.isEmergencyStop()) {
+            ec.emergencyStop();
+        } else {
+            ec.addCommand(cbpd.getFloor());
+        }
     }
 
     @Override
