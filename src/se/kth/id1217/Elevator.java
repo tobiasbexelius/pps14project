@@ -4,10 +4,11 @@ package se.kth.id1217;
  * Represents an elevator.
  */
 public class Elevator {
-    private static final double DEFAULT_POSITION = 0.0;
-    private static final double DEFAULT_SPEED = 0.000157;
+    public static final double DEFAULT_POSITION = 0.0;
+    public static final double DEFAULT_SPEED = 0.000157;
     private static final double DELTA = 0.01;
 
+    private boolean doorOpen;
     private final int id;
     private double position;
     private double speed;
@@ -16,6 +17,11 @@ public class Elevator {
         this.id = id;
         position = DEFAULT_POSITION;
         speed = DEFAULT_SPEED;
+        doorOpen = false;
+    }
+
+    public void closeDoor() {
+        doorOpen = false;
     }
 
     public int getFloor() {
@@ -36,6 +42,14 @@ public class Elevator {
 
     public boolean isAtFloor(int floor) {
         return Math.abs(position - floor) < DELTA;
+    }
+
+    public boolean isDoorOpen() {
+        return doorOpen;
+    }
+
+    public void openDoor() {
+        doorOpen = true;
     }
 
     public void setPosition(double position) {

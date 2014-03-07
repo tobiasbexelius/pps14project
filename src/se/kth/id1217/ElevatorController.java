@@ -6,7 +6,7 @@ public class ElevatorController implements Runnable {
 
     private static final int CAPACITY = 50;
 
-    private ArrayBlockingQueue<Integer> commandQueue; // TODO stack?
+    private ArrayBlockingQueue<Integer> commandQueue;
     private final Elevator elevator;
     private final HardwareController hwc;
 
@@ -22,7 +22,21 @@ public class ElevatorController implements Runnable {
     }
 
     private void closeDoor() {
-        hwc.handleDoor(elevator.getId(), DoorAction.DoorClose);
+        if (elevator.isDoorOpen()) {
+            hwc.handleDoor(elevator.getId(), DoorAction.DoorClose);
+            waitForDoor();
+            elevator.closeDoor();
+        }
+    }
+
+    private void waitForDoor() {
+        try {
+            long duration = Math.round(1500 * Elevator.DEFAULT_SPEED
+                    / elevator.getSpeed());
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
     }
 
     private void goDown() {
@@ -35,7 +49,7 @@ public class ElevatorController implements Runnable {
         }
 
         closeDoor();
-        // TODO vänta på att dörrarna stängs
+
         if (floor > elevator.getPosition()) {
             goUp();
         } else {
@@ -66,7 +80,11 @@ public class ElevatorController implements Runnable {
     }
 
     private void openDoor() {
-        hwc.handleDoor(elevator.getId(), DoorAction.DoorOpen);
+        if (!elevator.isDoorOpen()) {
+            hwc.handleDoor(elevator.getId(), DoorAction.DoorOpen);
+            waitForDoor();
+            elevator.openDoor();
+        }
     }
 
     @Override
