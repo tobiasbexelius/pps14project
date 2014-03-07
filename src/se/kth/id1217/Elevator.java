@@ -44,6 +44,10 @@ public class Elevator {
         return Math.abs(position - floor) < DELTA;
     }
 
+    public boolean isAtFloor() {
+        return Math.abs(position - Math.round(position)) < DELTA;
+    }
+
     public boolean isDoorOpen() {
         return doorOpen;
     }
