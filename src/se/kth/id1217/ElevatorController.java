@@ -9,6 +9,7 @@ public class ElevatorController implements Runnable {
     private final Elevator elevator;
     private final HardwareController hwc;
     private boolean emergencyStop;
+    private MotorAction currentMotorAction;
 
     public ElevatorController(HardwareController hwc, Elevator elevator) {
         this.hwc = hwc;
@@ -44,6 +45,7 @@ public class ElevatorController implements Runnable {
 
     private void goDown() {
         hwc.handleMotor(elevator.getId(), MotorAction.MotorDown);
+        currentMotorAction = MotorAction.MotorDown;
     }
 
     private void goToFloor(int floor) {
@@ -90,6 +92,7 @@ public class ElevatorController implements Runnable {
 
     private void goUp() {
         hwc.handleMotor(elevator.getId(), MotorAction.MotorUp);
+        currentMotorAction = MotorAction.MotorUp;
     }
 
     private void openDoor() {
@@ -115,6 +118,7 @@ public class ElevatorController implements Runnable {
 
     private void stop() {
         hwc.handleMotor(elevator.getId(), MotorAction.MotorStop);
+        currentMotorAction = MotorAction.MotorStop;
     }
 
     private void updatePosition() {
