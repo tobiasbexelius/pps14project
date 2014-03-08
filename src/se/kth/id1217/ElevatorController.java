@@ -186,4 +186,28 @@ public class ElevatorController implements Runnable {
         emergencyStop = true;
     }
 
+    private int getTurningFloor() {
+        int turningFloor = -1;
+        if (!commandQueue.isEmpty()
+                && commandQueue.peek() > elevator.getPosition()) {
+            turningFloor = Integer.MIN_VALUE;
+            for (int f : commandQueue) {
+                if (f > turningFloor)
+                    turningFloor = f;
+                else
+                    break;
+            }
+        } else if (!commandQueue.isEmpty()
+                && commandQueue.peek() < elevator.getPosition()) {
+            turningFloor = Integer.MAX_VALUE;
+            for (int f : commandQueue) {
+                if (f < turningFloor)
+                    turningFloor = f;
+                else
+                    break;
+            }
+        }
+        return turningFloor;
+
+    }
 }

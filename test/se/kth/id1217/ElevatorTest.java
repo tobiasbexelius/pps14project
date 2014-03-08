@@ -20,8 +20,7 @@ public class ElevatorTest extends TestCase {
         e.setPosition(1.9);
         assertFalse(e.isAtFloor());
 
-        e.setPosition(1.991);
+        e.setPosition(1.9991);
         assertTrue(e.isAtFloor());
     }
-
 }
