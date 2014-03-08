@@ -27,24 +27,32 @@ public class ElevatorController implements Runnable {
 
     public double costToServe(FloorButtonPressDesc fbpd) {
         double cost = 0.0;
+        final int floorTo = fbpd.getFloor();
 
         if (isActive()) {
             cost += COST_ACTIVE;
 
-            if ((goingUp() && fbpd.getFloor() < elevator.getPosition())
-                    || (goingDown() && fbpd.getFloor() > elevator.getPosition())) {
+            if ((goingUp() && floorTo < elevator.getPosition())
+                    || (goingDown() && floorTo > elevator.getPosition())) {
                 cost += COST_WRONG_DIRECTION;
             }
 
-            if ((goingUp() && fbpd.getType() == FloorButtonType.GoingDown)
-                    || (goingDown() && fbpd.getType() == FloorButtonType.GoingUp)) {
-                cost += COST_WRONG_DIRECTION;
+            if (floorAlongCurrentRoute(floorTo)) {
+                if ((goingUp() && fbpd.getType() == FloorButtonType.GoingDown)
+                        || (goingDown() && fbpd.getType() == FloorButtonType.GoingUp)) {
+                    cost += COST_WRONG_DIRECTION;
+                }
             }
         }
 
-        cost += Math.abs(fbpd.getFloor() - elevator.getPosition());
+        cost += Math.abs(floorTo - elevator.getPosition());
 
         return cost;
+    }
+
+    private boolean floorAlongCurrentRoute(int floor) {
+        return (goingUp() && commandQueue.peek() > floor)
+                || (goingDown() && commandQueue.peek() < floor);
     }
 
     private boolean goingDown() {
