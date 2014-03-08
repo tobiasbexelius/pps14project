@@ -6,7 +6,7 @@ package se.kth.id1217;
 public class Elevator {
     public static final double DEFAULT_POSITION = 0.0;
     public static final double DEFAULT_SPEED = 0.000157;
-    private static final double DELTA = 0.01;
+    private static final double DELTA = 0.001;
 
     private boolean doorOpen;
     private final int id;
