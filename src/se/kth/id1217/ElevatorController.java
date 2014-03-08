@@ -2,6 +2,7 @@ package se.kth.id1217;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Semaphore;
 
 public class ElevatorController implements Runnable {
 
@@ -13,12 +14,14 @@ public class ElevatorController implements Runnable {
     private final HardwareController hwc;
     private boolean emergencyStop;
     private MotorAction currentMotorAction;
+    private final Semaphore commandInQueue;
 
     public ElevatorController(HardwareController hwc, Elevator elevator) {
         this.hwc = hwc;
         this.elevator = elevator;
 
         commandQueue = new ConcurrentLinkedDeque<Integer>();
+        commandInQueue = new Semaphore(0);
         emergencyStop = false;
     }
 
@@ -57,8 +60,10 @@ public class ElevatorController implements Runnable {
     }
 
     public void addCommand(int floor) {
-        if (!commandQueue.contains(floor)) {
+        if (!commandQueue.contains(floor)
+                && !(elevator.isAtFloor(floor) && elevator.isDoorOpen())) {
             commandQueue.add(floor);
+            commandInQueue.release();
         }
     }
 
@@ -88,16 +93,14 @@ public class ElevatorController implements Runnable {
     private void goToFloor(int floor) {
         emergencyStop = false;
 
-        if (elevator.isAtFloor(floor)) {
-            return;
-        }
-
         closeDoor();
 
-        if (floor > elevator.getPosition()) {
+        if (elevator.isFloorAbove(floor)) {
             goUp();
-        } else {
+        } else if (elevator.isFloorBelow(floor)) {
             goDown();
+        } else {
+            return;
         }
 
         boolean done = false;
@@ -146,9 +149,12 @@ public class ElevatorController implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (commandQueue.peek() != null) {
+            try {
+                commandInQueue.acquire();
                 int command = commandQueue.peek();
                 goToFloor(command);
+            } catch (InterruptedException e) {
+                // Ignore
             }
         }
     }
@@ -169,6 +175,7 @@ public class ElevatorController implements Runnable {
     public void emergencyStop() {
         emergencyStop = true;
         commandQueue.clear();
+        commandInQueue.drainPermits();
     }
 
 }

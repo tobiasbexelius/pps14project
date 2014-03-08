@@ -64,4 +64,12 @@ public class Elevator {
         this.speed = speed;
     }
 
+    public boolean isFloorAbove(int floor) {
+        return floor > position + DELTA;
+    }
+
+    public boolean isFloorBelow(int floor) {
+        return floor < position - DELTA;
+    }
+
 }
