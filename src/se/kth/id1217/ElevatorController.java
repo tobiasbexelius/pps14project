@@ -6,8 +6,9 @@ import java.util.concurrent.Semaphore;
 
 public class ElevatorController implements Runnable {
 
-    private static final double COST_ACTIVE = 100;
-    private static final double COST_WRONG_DIRECTION = 50;
+    private static final double COST_ACTIVE = 10;
+    private static final double COST_WRONG_DIRECTION = 5;
+    private static final double BONUS_ALONG_ROUTE = -15;
 
     private Deque<Integer> commandQueue;
     private final Elevator elevator;
@@ -38,9 +39,9 @@ public class ElevatorController implements Runnable {
             }
 
             if (floorAlongCurrentRoute(floorTo)) {
-                if ((goingUp() && fbpd.getType() == FloorButtonType.GoingDown)
-                        || (goingDown() && fbpd.getType() == FloorButtonType.GoingUp)) {
-                    cost += COST_WRONG_DIRECTION;
+                if ((goingUp() && fbpd.getType() == FloorButtonType.GoingUp)
+                        || (goingDown() && fbpd.getType() == FloorButtonType.GoingDown)) {
+                    cost += BONUS_ALONG_ROUTE;
                 }
             }
         }
@@ -51,20 +52,26 @@ public class ElevatorController implements Runnable {
     }
 
     private boolean floorAlongCurrentRoute(int floor) {
-        return (goingUp() && commandQueue.peek() > floor)
-                || (goingDown() && commandQueue.peek() < floor);
+        int turningFloor = getTurningFloor();
+        System.out.println("turningfloor: " + turningFloor + "\tfloor: "
+                + floor);
+        return (goingUp() && turningFloor >= floor && elevator.getPosition() <= floor)
+                || (goingDown() && turningFloor <= floor && elevator
+                        .getPosition() >= floor);
     }
 
     private boolean goingDown() {
-        return currentMotorAction == MotorAction.MotorDown;
+        return !commandQueue.isEmpty()
+                && commandQueue.peek() <= elevator.getPosition();
     }
 
     private boolean isActive() {
-        return currentMotorAction != MotorAction.MotorStop;
+        return !commandQueue.isEmpty();
     }
 
     private boolean goingUp() {
-        return currentMotorAction == MotorAction.MotorUp;
+        return !commandQueue.isEmpty()
+                && commandQueue.peek() >= elevator.getPosition();
     }
 
     public void addCommand(int floor) {
@@ -188,8 +195,7 @@ public class ElevatorController implements Runnable {
 
     private int getTurningFloor() {
         int turningFloor = -1;
-        if (!commandQueue.isEmpty()
-                && commandQueue.peek() > elevator.getPosition()) {
+        if (goingUp()) {
             turningFloor = Integer.MIN_VALUE;
             for (int f : commandQueue) {
                 if (f > turningFloor)
@@ -197,8 +203,7 @@ public class ElevatorController implements Runnable {
                 else
                     break;
             }
-        } else if (!commandQueue.isEmpty()
-                && commandQueue.peek() < elevator.getPosition()) {
+        } else if (goingDown()) {
             turningFloor = Integer.MAX_VALUE;
             for (int f : commandQueue) {
                 if (f < turningFloor)
