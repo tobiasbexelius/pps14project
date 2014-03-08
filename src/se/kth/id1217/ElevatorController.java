@@ -107,6 +107,8 @@ public class ElevatorController implements Runnable {
         while (!done) {
             if (emergencyStop) {
                 stop();
+                commandQueue.clear();
+                commandInQueue.drainPermits();
                 emergencyStop = false;
                 return;
             }
@@ -174,8 +176,6 @@ public class ElevatorController implements Runnable {
 
     public void emergencyStop() {
         emergencyStop = true;
-        commandQueue.clear();
-        commandInQueue.drainPermits();
     }
 
 }
