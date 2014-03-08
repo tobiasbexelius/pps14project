@@ -27,6 +27,49 @@
 
 \section{Introduction}
 
-Foobar.
+Our task was to design, implement and evaluate a controller for a simulated set
+of elevators.
+
+\section{Implementation}
+
+We decided to implement the controller application in Java, since it is a
+language we both felt comfortable with. This also allowed us to utilize classes
+from the extensive Java Standard Library and to develop the program using the
+Eclipse IDE. We mainly developed the controller application in our laptops,
+which both run a recent edition of the GNU/Linux Ubuntu OS.
+
+The controller application consists of a set of classes with different
+responsibilities.
+
+% Describe your implementation (functions, classes, interfaces).
+\begin{description}
+
+\item[\texttt{se.kth.id1217.Main}] The main entry point to the controller
+    program. Parses command line parameters, sets up the network connection and
+    passes control over to \texttt{se.kth.id1217.MasterController}.
+
+\item[\texttt{se.kth.id1217.MasterController}] Receives messages from the
+    hardware. Decides which elevator should respond to floor button presses and
+    passes cabin button presses onto an instance of
+    \texttt{se.kth.id1217.ElevatorController}.
+
+\item[\texttt{se.kth.id1217.ElevatorController}] The control unit for one of the
+    elevators. Each elevator has a separate instance of this class. Manages the
+    route for this elevator and controlls the motors.
+
+\end{description}
+
+\section{Algorithms}
+% Describe algorithms you have developed (chosen), synchronization or/and
+% communication mechanisms you have used, and explain motivation for your design
+% choices.
+
+\section{Evaluation}
+% Present and explain your performance evaluation results, if any.
+
+\section{Summary and conclusions}
+% Give a summary of your achievements. In particular, explain briefly what you
+% learned from the assignment and any problems you may have encountered. You
+% are also welcome to suggest changes to the assignment in order to improve it.
 
 \end{document}
