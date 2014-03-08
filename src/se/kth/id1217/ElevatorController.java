@@ -5,6 +5,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ElevatorController implements Runnable {
 
+    private static final double COST_ACTIVE = 100;
+    private static final double COST_WRONG_DIRECTION = 50;
+
     private Deque<Integer> commandQueue;
     private final Elevator elevator;
     private final HardwareController hwc;
@@ -17,6 +20,40 @@ public class ElevatorController implements Runnable {
 
         commandQueue = new ConcurrentLinkedDeque<Integer>();
         emergencyStop = false;
+    }
+
+    public double costToServe(FloorButtonPressDesc fbpd) {
+        double cost = 0.0;
+
+        if (isActive()) {
+            cost += COST_ACTIVE;
+
+            if ((goingUp() && fbpd.getFloor() < elevator.getPosition())
+                    || (goingDown() && fbpd.getFloor() > elevator.getPosition())) {
+                cost += COST_WRONG_DIRECTION;
+            }
+
+            if ((goingUp() && fbpd.getType() == FloorButtonType.GoingDown)
+                    || (goingDown() && fbpd.getType() == FloorButtonType.GoingUp)) {
+                cost += COST_WRONG_DIRECTION;
+            }
+        }
+
+        cost += Math.abs(fbpd.getFloor() - elevator.getPosition());
+
+        return cost;
+    }
+
+    private boolean goingDown() {
+        return currentMotorAction == MotorAction.MotorDown;
+    }
+
+    private boolean isActive() {
+        return currentMotorAction != MotorAction.MotorStop;
+    }
+
+    private boolean goingUp() {
+        return currentMotorAction == MotorAction.MotorUp;
     }
 
     public void addCommand(int floor) {

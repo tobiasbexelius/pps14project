@@ -55,8 +55,17 @@ public class MasterController implements HardwareListener {
                 fbpd.getFloor(), fbpd.getType());
         System.err.flush();
 
-        // TODO: replace with clever logic
-        elevatorControllers.get(0).addCommand(fbpd.getFloor());
+        double minCost = Double.MAX_VALUE;
+        ElevatorController minCostElevatorController = null;
+        for (ElevatorController ec : elevatorControllers) {
+            double cost = ec.costToServe(fbpd);
+            if (cost < minCost) {
+                minCost = cost;
+                minCostElevatorController = ec;
+            }
+        }
+
+        minCostElevatorController.addCommand(fbpd.getFloor());
     }
 
     @Override
