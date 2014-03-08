@@ -1,12 +1,11 @@
 package se.kth.id1217;
 
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ElevatorController implements Runnable {
 
-    private static final int CAPACITY = 50;
-
-    private ArrayBlockingQueue<Integer> commandQueue;
+    private Deque<Integer> commandQueue;
     private final Elevator elevator;
     private final HardwareController hwc;
     private boolean emergencyStop;
@@ -15,7 +14,7 @@ public class ElevatorController implements Runnable {
         this.hwc = hwc;
         this.elevator = elevator;
 
-        commandQueue = new ArrayBlockingQueue<Integer>(CAPACITY);
+        commandQueue = new ConcurrentLinkedDeque<Integer>();
         emergencyStop = false;
     }
 
