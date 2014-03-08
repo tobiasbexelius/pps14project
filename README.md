@@ -8,9 +8,15 @@ A simulation of a set of elevators.
 
 alternatively
 
-    javac -d bin src/*.java
+    mkdir -p bin
+    javac -d bin src/**/*.java
 
 ## How to run
 
-    java -cp lib/elevator.jar elevator.Elevators -tcp &
-    java -cp bin se.kth.id1217.Main localhost 4711 1 3
+    ./run NUMBER_OF_ELEVATORS TOP_FLOOR
+
+for instance
+
+    ./run 2 4
+
+will run the simulation with 2 elevators and 5 floors (BV and floors 1-4).
