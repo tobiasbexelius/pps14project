@@ -1,5 +1,7 @@
 package se.kth.id1217;
 
+import se.kth.id1217.hwapi.DoorAction;
+
 public class Main {
 
     public static void main(String[] args) throws Exception {

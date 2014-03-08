@@ -1,4 +1,4 @@
-package se.kth.id1217;
+package se.kth.id1217.hwapi;
 
 public enum FloorButtonType {
     GoingDown(-1), GoingUp(1);

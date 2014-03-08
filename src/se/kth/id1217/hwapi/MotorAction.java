@@ -1,4 +1,4 @@
-package se.kth.id1217;
+package se.kth.id1217.hwapi;
 
 public enum MotorAction {
     MotorDown(-1), MotorStop(0), MotorUp(1);

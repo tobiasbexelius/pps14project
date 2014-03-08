@@ -4,6 +4,12 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Semaphore;
 
+import se.kth.id1217.hwapi.DoorAction;
+import se.kth.id1217.hwapi.FloorButtonPressDesc;
+import se.kth.id1217.hwapi.FloorButtonType;
+import se.kth.id1217.hwapi.HardwareController;
+import se.kth.id1217.hwapi.MotorAction;
+
 public class ElevatorController implements Runnable {
 
     private static final double COST_ACTIVE = 10;

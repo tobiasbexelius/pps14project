@@ -9,6 +9,17 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
+import se.kth.id1217.hwapi.CabinButtonPressDesc;
+import se.kth.id1217.hwapi.CabinPositionDesc;
+import se.kth.id1217.hwapi.DoorAction;
+import se.kth.id1217.hwapi.ErrorDesc;
+import se.kth.id1217.hwapi.FloorButtonPressDesc;
+import se.kth.id1217.hwapi.FloorButtonType;
+import se.kth.id1217.hwapi.HardwareController;
+import se.kth.id1217.hwapi.HardwareListener;
+import se.kth.id1217.hwapi.MotorAction;
+import se.kth.id1217.hwapi.SpeedDesc;
+
 public class SocketHardwareController implements HardwareController {
     private List<HardwareListener> listeners;
     private Socket socket;

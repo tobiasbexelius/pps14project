@@ -1,4 +1,4 @@
-package se.kth.id1217;
+package se.kth.id1217.hwapi;
 
 public class CabinPositionDesc {
     private final int cabin;

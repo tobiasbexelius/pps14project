@@ -3,6 +3,14 @@ package se.kth.id1217;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.kth.id1217.hwapi.CabinButtonPressDesc;
+import se.kth.id1217.hwapi.CabinPositionDesc;
+import se.kth.id1217.hwapi.ErrorDesc;
+import se.kth.id1217.hwapi.FloorButtonPressDesc;
+import se.kth.id1217.hwapi.HardwareController;
+import se.kth.id1217.hwapi.HardwareListener;
+import se.kth.id1217.hwapi.SpeedDesc;
+
 public class MasterController implements HardwareListener {
 
     private final HardwareController hwc;

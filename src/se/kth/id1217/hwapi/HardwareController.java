@@ -1,4 +1,4 @@
-package se.kth.id1217;
+package se.kth.id1217.hwapi;
 
 public interface HardwareController {
     public void handleDoor(int cabin, DoorAction action);

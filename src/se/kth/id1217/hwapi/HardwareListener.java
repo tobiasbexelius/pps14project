@@ -1,4 +1,4 @@
-package se.kth.id1217;
+package se.kth.id1217.hwapi;
 
 public interface HardwareListener {
     public void onFloorButton(FloorButtonPressDesc fbpd);
