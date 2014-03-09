@@ -21,6 +21,7 @@ public class ElevatorController implements Runnable {
     private final HardwareController hwc;
     private boolean emergencyStop;
     private MotorAction currentMotorAction;
+
     private final Semaphore commandInQueue;
 
     public ElevatorController(HardwareController hwc, Elevator elevator) {
@@ -54,13 +55,12 @@ public class ElevatorController implements Runnable {
 
         cost += Math.abs(floorTo - elevator.getPosition());
 
+        System.out.println(cost + "\t " + commandQueue);
         return cost;
     }
 
     private boolean floorAlongCurrentRoute(int floor) {
         int turningFloor = getTurningFloor();
-        System.out.println("turningfloor: " + turningFloor + "\tfloor: "
-                + floor);
         return (goingUp() && turningFloor >= floor && elevator.getPosition() <= floor)
                 || (goingDown() && turningFloor <= floor && elevator
                         .getPosition() >= floor);
@@ -68,7 +68,7 @@ public class ElevatorController implements Runnable {
 
     private boolean goingDown() {
         return !commandQueue.isEmpty()
-                && commandQueue.peek() <= elevator.getPosition();
+                && elevator.isFloorBelow(commandQueue.peek());
     }
 
     private boolean isActive() {
@@ -77,12 +77,16 @@ public class ElevatorController implements Runnable {
 
     private boolean goingUp() {
         return !commandQueue.isEmpty()
-                && commandQueue.peek() >= elevator.getPosition();
+                && elevator.isFloorAbove(commandQueue.peek());
     }
 
-    public void addCommand(int floor) {
+    private boolean isStopped() {
+        return currentMotorAction == MotorAction.MotorStop;
+    }
+
+    public synchronized void addCommand(int floor) {
         if (!commandQueue.contains(floor)
-                && !(elevator.isAtFloor(floor) && elevator.isDoorOpen())) {
+                && !(elevator.isAtFloor(floor) && isStopped())) {
             commandQueue.add(floor);
             commandInQueue.release();
         }
@@ -112,16 +116,16 @@ public class ElevatorController implements Runnable {
     }
 
     private void goToFloor(int floor) {
+        System.out.println("floor " + floor + "\tq " + commandQueue + "\td "
+                + goingDown() + "\tu " + goingUp());
         emergencyStop = false;
 
-        closeDoor();
-
         if (elevator.isFloorAbove(floor)) {
+            closeDoor();
             goUp();
         } else if (elevator.isFloorBelow(floor)) {
+            closeDoor();
             goDown();
-        } else {
-            return;
         }
 
         boolean done = false;
@@ -174,8 +178,10 @@ public class ElevatorController implements Runnable {
         while (true) {
             try {
                 commandInQueue.acquire();
+
                 int command = commandQueue.peek();
                 goToFloor(command);
+
             } catch (InterruptedException e) {
                 // Ignore
             }
