@@ -22,7 +22,7 @@ public class MasterController implements HardwareListener {
 
     /**
      * Instantiates a master controller.
-     *
+     * 
      * @param hwc
      *            An instance of a hardware controller.
      * @param numberOfElevators
@@ -59,7 +59,7 @@ public class MasterController implements HardwareListener {
         if (cbpd.isEmergencyStop()) {
             ec.emergencyStop();
         } else {
-            ec.addCommand(cbpd.getFloor());
+            ec.addCommand(new FloorCommand(cbpd.getFloor()));
         }
     }
 
@@ -86,7 +86,8 @@ public class MasterController implements HardwareListener {
             }
         }
 
-        minCostElevatorController.addCommand(fbpd.getFloor());
+        minCostElevatorController.addCommand(new FloorCommand(fbpd.getFloor(),
+                fbpd.getType()));
     }
 
     @Override
