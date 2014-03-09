@@ -40,7 +40,7 @@ public class Elevator {
      * @return The number of the closest floor.
      */
     public synchronized int getFloor() {
-        return (int) position;
+        return (int) Math.round(position);
     }
 
     /**
