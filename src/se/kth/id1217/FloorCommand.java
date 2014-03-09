@@ -37,12 +37,12 @@ public class FloorCommand {
         }
         FloorCommand other = (FloorCommand) obj;
 
-        return other.floor == floor;
+        return other.floor == floor && other.type == type;
     }
 
     @Override
     public int hashCode() {
-        return floor;
+        return floor + 17 * type.hashCode();
     }
 
 }

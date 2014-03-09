@@ -1,6 +1,8 @@
 package se.kth.id1217;
 
 import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Semaphore;
 
@@ -174,15 +176,47 @@ public class ElevatorController implements Runnable {
 
             // Stop at floor if it's in our queue
             if (elevator.isAtFloor()) {
-                if (commandQueue
-                        .contains(new FloorCommand(elevator.getFloor()))) {
-                    commandQueue.remove(new FloorCommand(elevator.getFloor()));
+                List<FloorCommand> commands = findCommandsInQueueByFloorAndCurrentDirection(elevator
+                        .getFloor());
+                if (!commands.isEmpty()) {
+                    System.err
+                            .printf("Stopping at floor %d, removing the following commands: %s\n",
+                                    elevator.getFloor(), commands);
+                    System.err.flush();
+                    commandQueue.removeAll(commands);
                     done = true;
                     stop();
                     openDoor();
                 }
             }
         }
+    }
+
+    private List<FloorCommand> findCommandsInQueueByFloorAndCurrentDirection(
+            int floor) {
+        List<FloorCommand> commands = new LinkedList<FloorCommand>();
+
+        // Find the button type to look for
+        FloorButtonType type = null;
+        if (goingUp()) {
+            type = FloorButtonType.GoingUp;
+        } else if (goingDown()) {
+            type = FloorButtonType.GoingDown;
+        }
+
+        // Search command queue for matching commands
+        for (FloorCommand fc : commandQueue) {
+            // Floor matches
+            if (fc.getFloor() == floor) {
+                // Direction matches
+                if (fc.getType() == null || type == null
+                        || fc.getType() == type) {
+                    commands.add(fc);
+                }
+            }
+        }
+
+        return commands;
     }
 
     private void goUp() {
