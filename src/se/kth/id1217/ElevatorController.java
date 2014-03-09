@@ -26,7 +26,7 @@ public class ElevatorController implements Runnable {
     private final HardwareController hwc;
     private boolean emergencyStop;
     private MotorAction currentMotorAction;
-    private final Semaphore commandInQueue;
+    private final Semaphore addCommandCalled;
 
     /**
      * Creates a new elevator controller.
@@ -41,7 +41,7 @@ public class ElevatorController implements Runnable {
         this.elevator = elevator;
 
         commandQueue = new ConcurrentLinkedDeque<FloorCommand>();
-        commandInQueue = new Semaphore(0);
+        addCommandCalled = new Semaphore(0);
         emergencyStop = false;
     }
 
@@ -104,8 +104,8 @@ public class ElevatorController implements Runnable {
         if (!commandQueue.contains(floorCommand)
                 && !(elevator.isAtFloor(floorCommand.getFloor()) && isStopped())) {
             commandQueue.add(floorCommand);
-            commandInQueue.release();
         }
+        addCommandCalled.release();
     }
 
     private void closeDoor() {
@@ -150,7 +150,7 @@ public class ElevatorController implements Runnable {
             if (emergencyStop) {
                 stop();
                 commandQueue.clear();
-                commandInQueue.drainPermits();
+                addCommandCalled.drainPermits();
                 emergencyStop = false;
                 return;
             }
@@ -198,13 +198,14 @@ public class ElevatorController implements Runnable {
     public void run() {
         while (true) {
             try {
-                commandInQueue.acquire();
-
-                FloorCommand command = commandQueue.peek();
-                goToFloor(command);
-
+                addCommandCalled.acquire();
             } catch (InterruptedException e) {
                 // Ignore
+            }
+
+            FloorCommand command = commandQueue.peek();
+            if (command != null) {
+                goToFloor(command);
             }
         }
     }
