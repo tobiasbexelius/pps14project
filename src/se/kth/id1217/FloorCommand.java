@@ -16,10 +16,6 @@ public class FloorCommand {
         this(floor, null);
     }
 
-    public boolean hasType() {
-        return type != null;
-    }
-
     public int getFloor() {
         return floor;
     }
@@ -31,7 +27,7 @@ public class FloorCommand {
     @Override
     public String toString() {
         return String.format("FloorCommand<%d, %s>", floor, type != null ? type
-                : "undefined");
+                : "Unknown");
     }
 
     @Override

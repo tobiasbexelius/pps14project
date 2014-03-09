@@ -52,7 +52,7 @@ public class MasterController implements HardwareListener {
 
     @Override
     public void onCabinButton(CabinButtonPressDesc cbpd) {
-        System.err.printf("Cabin button pressed: cabin=%s floor=%d \n",
+        System.err.printf("Cabin button pressed: cabin=%s floor=%d\n",
                 cbpd.getCabin(), cbpd.getFloor());
         System.err.flush();
         ElevatorController ec = elevatorControllers.get(cbpd.getCabin() - 1);
