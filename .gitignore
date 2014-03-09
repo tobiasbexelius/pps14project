@@ -4,6 +4,7 @@
 *.o
 *.out
 *.pdf
+bin
 controller
 report.synctex.gz
 test-hwAPI
