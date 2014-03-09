@@ -11,29 +11,41 @@ import se.kth.id1217.hwapi.HardwareController;
 import se.kth.id1217.hwapi.HardwareListener;
 import se.kth.id1217.hwapi.SpeedDesc;
 
+/**
+ * The master controller. Listens for events from the hardware and passes them
+ * on to elevator controllers.
+ */
 public class MasterController implements HardwareListener {
 
-    private final HardwareController hwc;
     private final List<Elevator> elevators;
     private final List<ElevatorController> elevatorControllers;
 
-    public MasterController(HardwareController hwc, int numberOfElevators)
-            throws Exception {
-        this.hwc = hwc;
-
-        // Create elevators and controllers
+    /**
+     * Instantiates a master controller.
+     *
+     * @param hwc
+     *            An instance of a hardware controller.
+     * @param numberOfElevators
+     *            The number of floors on the hardware.
+     */
+    public MasterController(HardwareController hwc, int numberOfElevators) {
         elevators = new ArrayList<Elevator>(numberOfElevators);
         elevatorControllers = new ArrayList<ElevatorController>(
                 numberOfElevators);
+
+        // Create elevators and controllers
         for (int i = 0; i < numberOfElevators; i++) {
+            // Create the elevator
             Elevator elevator = new Elevator(i + 1);
             elevator.openDoor();
             elevators.add(i, elevator);
 
+            // Create the elevator controller
             ElevatorController controller = new ElevatorController(hwc,
                     elevator);
             elevatorControllers.add(i, controller);
 
+            // Spawn a new thread for the elevator controller
             new Thread(controller).start();
         }
     }
@@ -63,6 +75,7 @@ public class MasterController implements HardwareListener {
                 fbpd.getFloor(), fbpd.getType());
         System.err.flush();
 
+        // Find the elevator with the lowest cost of serving the button press
         double minCost = Double.MAX_VALUE;
         ElevatorController minCostElevatorController = null;
         for (ElevatorController ec : elevatorControllers) {
