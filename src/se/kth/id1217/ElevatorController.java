@@ -10,8 +10,12 @@ import se.kth.id1217.hwapi.FloorButtonType;
 import se.kth.id1217.hwapi.HardwareController;
 import se.kth.id1217.hwapi.MotorAction;
 
+/**
+ * An elevator controller. Controls the motor and door of a single elevator.
+ */
 public class ElevatorController implements Runnable {
 
+    private static final int DOOR_MOTION_DELAY = 1500;
     private static final double COST_ACTIVE = 10;
     private static final double COST_WRONG_DIRECTION = 5;
     private static final double BONUS_ALONG_ROUTE = -15;
@@ -22,9 +26,16 @@ public class ElevatorController implements Runnable {
     private final HardwareController hwc;
     private boolean emergencyStop;
     private MotorAction currentMotorAction;
-
     private final Semaphore commandInQueue;
 
+    /**
+     * Creates a new elevator controller.
+     *
+     * @param hwc
+     *            A hardware controller.
+     * @param elevator
+     *            The elevator to control.
+     */
     public ElevatorController(HardwareController hwc, Elevator elevator) {
         this.hwc = hwc;
         this.elevator = elevator;
@@ -61,7 +72,6 @@ public class ElevatorController implements Runnable {
 
         cost += Math.abs(floorTo - elevator.getPosition());
 
-        System.out.println(cost + "\t " + commandQueue);
         return cost;
     }
 
@@ -108,8 +118,8 @@ public class ElevatorController implements Runnable {
 
     private void waitForDoor() {
         try {
-            long duration = Math.round(1500 * Elevator.DEFAULT_SPEED
-                    / elevator.getSpeed());
+            long duration = Math.round(DOOR_MOTION_DELAY
+                    * Elevator.DEFAULT_SPEED / elevator.getSpeed());
             Thread.sleep(duration);
         } catch (InterruptedException e) {
             // Ignore
@@ -122,8 +132,10 @@ public class ElevatorController implements Runnable {
     }
 
     private void goToFloor(FloorCommand floorCommand) {
+        // Always clear emergency stop when instructed to go to a new floor
         emergencyStop = false;
 
+        // Close door and start moving up/down
         if (elevator.isFloorAbove(floorCommand.getFloor())) {
             closeDoor();
             goUp();
@@ -134,6 +146,7 @@ public class ElevatorController implements Runnable {
 
         boolean done = false;
         while (!done) {
+            // Handle emergency stop
             if (emergencyStop) {
                 stop();
                 commandQueue.clear();
@@ -148,15 +161,19 @@ public class ElevatorController implements Runnable {
                 e.printStackTrace();
             }
 
+            // Update position and scale
             updatePosition();
             updateScale();
-            if (elevator.isAtFloor()
-                    && commandQueue.contains(new FloorCommand(elevator
-                            .getFloor()))) {
-                commandQueue.remove(new FloorCommand(elevator.getFloor()));
-                done = true;
-                stop();
-                openDoor();
+
+            // Stop at floor if it's in our queue
+            if (elevator.isAtFloor()) {
+                if (commandQueue
+                        .contains(new FloorCommand(elevator.getFloor()))) {
+                    commandQueue.remove(new FloorCommand(elevator.getFloor()));
+                    done = true;
+                    stop();
+                    openDoor();
+                }
             }
         }
     }
