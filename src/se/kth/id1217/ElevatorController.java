@@ -20,6 +20,7 @@ public class ElevatorController implements Runnable {
     private static final double COST_WRONG_DIRECTION = 5;
     private static final double BONUS_ALONG_ROUTE = -15;
     private static final double BONUS_COMMAND_IN_QUEUE = -1000;
+    private static final double BONUS_STOPPED_AT_FLOOR = -1500;
 
     private Deque<FloorCommand> commandQueue;
     private final Elevator elevator;
@@ -48,6 +49,10 @@ public class ElevatorController implements Runnable {
     public double costToServe(FloorButtonPressDesc fbpd) {
         double cost = 0.0;
         final int floorTo = fbpd.getFloor();
+
+        if (elevator.isAtFloor(floorTo) && commandQueue.isEmpty() && elevator.isDoorOpen()) {
+            cost += BONUS_STOPPED_AT_FLOOR;
+        }
 
         if (commandQueue.contains(new FloorCommand(fbpd.getFloor(), fbpd
                 .getType()))) {
