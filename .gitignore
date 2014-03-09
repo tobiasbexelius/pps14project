@@ -5,4 +5,5 @@
 *.out
 *.pdf
 controller
+report.synctex.gz
 test-hwAPI
