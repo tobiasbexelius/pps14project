@@ -104,6 +104,57 @@ Shared datastructures, semaphores, synchronized methods(monitors??)
 \section{Evaluation}
 % Present and explain your performance evaluation results, if any.
 
+In order to test the performance of our elevator controller we mainly used two
+kinds of tests, stress tests and acceptance tests.
+
+The first kind of testing, stress testing, usually involved turning the speed up
+to max and pressing a lot of different buttons in rapid succession. If something
+was broken, this was a quick way to find out about it. This allowed us to
+discover a number of synchronization bugs and other glitches.
+
+For the second kind of testing, acceptance testing, we used the use cases
+presented on the course
+webpage\footnote{\url{http://www.it.kth.se/courses/ID1217/labs/task1.html}}.
+Results are listed in table~\ref{tab:acceptance_test_results}.
+
+It is worth noting that for some test cases, for instance test 1.2, the expected
+behavior is not obvious.
+
+\begin{table}[h]
+    \begin{tabular}{| l | c | p{4.7cm} | p{4.7cm} |}
+        \hline
+        Test & \# & Expected behavior & Actual behavior \\
+        \hline
+        1.1 & 1 &
+            Stops at floors 3, 5 and 3. &
+            Stops at floors 3 and 5. \\
+        1.2 & 1 &
+            Stops at floors 3 and 2. &
+            Stops at floors 3 and 2. \\
+        1.3 & 1 &
+            Stops at floors 2, 3 and 4. &
+            Stops at floors 2, 3 and 4. \\
+        1.4 & 1 &
+            Stops at floors 2, 3 and 4. &
+            Stops at floors 2, 3 and 4. \\
+        2.1 & 2 &
+            Both elevators stop at floor 3. &
+            Both elevators stop at floor 3. \\ % Note: on branch experiment-2
+        2.2 & 2 &
+            First elevator stops at floor 3.
+                Second elevator stops at floor 1.
+                Any elevator stops at floor 2. &
+            First elevator stops at floor 2 and 3.
+                Second elevator stops at floor 1. \\
+        \hline
+    \end{tabular}
+    \caption{Acceptance test results. All elevators start at the BV floor.}
+    \label{tab:acceptance_test_results}
+\end{table}
+
+As the results in the table suggest, our elevator controller behaves fairly
+close to what we would expect.
+
 \section{Summary and conclusions}
 % Give a summary of your achievements. In particular, explain briefly what you
 % learned from the assignment and any problems you may have encountered. You
