@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,37 +19,58 @@ import se.kth.id1217.hwapi.HardwareListener;
 import se.kth.id1217.hwapi.MotorAction;
 import se.kth.id1217.hwapi.SpeedDesc;
 
+/**
+ * A hardware controller controlling the hardware via a TCP socket.
+ */
 public class SocketHardwareController implements HardwareController {
+
     private List<HardwareListener> listeners;
     private Socket socket;
     private PrintStream out;
-    private Thread thread;
     private BufferedReader in;
 
+    /**
+     * Constructs a new hardware controller.
+     */
     public SocketHardwareController() {
         this.listeners = new LinkedList<HardwareListener>();
     }
 
+    /**
+     * Adds a listener for events from the hardware.
+     * 
+     * @param listener
+     */
     public synchronized void addHardwareListener(HardwareListener listener) {
         listeners.add(listener);
     }
 
-    public synchronized void connect(String host, int port)
-            throws UnknownHostException, IOException {
+    /**
+     * Connects the controller to a hardware instance listening on the specified
+     * host and port. Spawns a new thread for handling events from the hardware.
+     * 
+     * @param host
+     *            The hardware host.
+     * @param port
+     *            The hardware port.
+     * @throws IOException
+     *             On IO errors.
+     */
+    public synchronized void connect(String host, int port) throws IOException {
         socket = new Socket(host, port);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintStream(socket.getOutputStream());
-        thread = new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 while (true) {
                     try {
                         String line = in.readLine();
-                        if(line == null){
+                        if (line == null) {
                             break;
                         }
-                        parseLine(line);
+                        handleLine(line);
                     } catch (IOException e) {
                         break;
                     }
@@ -61,7 +81,14 @@ public class SocketHardwareController implements HardwareController {
         thread.start();
     }
 
-    private void parseLine(String line) {
+    /**
+     * Parses a line of input from the hardware, extracts details about the
+     * event and notifies any listeners.
+     * 
+     * @param line
+     *            The line to parse.
+     */
+    private void handleLine(String line) {
         String[] tokens = line.split(" ");
         switch (tokens[0].charAt(0)) {
         case 'b':
@@ -89,30 +116,60 @@ public class SocketHardwareController implements HardwareController {
         }
     }
 
+    /**
+     * Notifies listeners about a floor button press event.
+     * 
+     * @param fbpd
+     *            Details about the button press.
+     */
     private void onFloorButton(FloorButtonPressDesc fbpd) {
         for (HardwareListener listener : listeners) {
             listener.onFloorButton(fbpd);
         }
     }
 
+    /**
+     * Notifies listeners about a cabin button press event.
+     * 
+     * @param cbpd
+     *            Details about the button press.
+     */
     private void onCabinButton(CabinButtonPressDesc cbpd) {
         for (HardwareListener listener : listeners) {
             listener.onCabinButton(cbpd);
         }
     }
 
+    /**
+     * Notifies listeners about a position update.
+     * 
+     * @param cpd
+     *            Details about the position update.
+     */
     private void onPosition(CabinPositionDesc cpd) {
         for (HardwareListener listener : listeners) {
             listener.onPosition(cpd);
         }
     }
 
+    /**
+     * Notifies listeners about a speed update.
+     * 
+     * @param sd
+     *            Details about the speed update.
+     */
     private void onSpeed(SpeedDesc sd) {
         for (HardwareListener listener : listeners) {
             listener.onSpeed(sd);
         }
     }
 
+    /**
+     * Notifies listeners about an error event.
+     * 
+     * @param ed
+     *            Details about the error.
+     */
     private void onError(ErrorDesc ed) {
         for (HardwareListener listener : listeners) {
             listener.onError(ed);
@@ -133,8 +190,12 @@ public class SocketHardwareController implements HardwareController {
 
     @Override
     public synchronized void handleMotor(int cabin, MotorAction action) {
+        System.err.println("");
+        System.err.flush();
         out.printf("m %d %d\n", cabin, action.getValue());
         out.flush();
+        System.err.println("");
+        System.err.flush();
     }
 
     @Override
