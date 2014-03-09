@@ -1,5 +1,8 @@
 package se.kth.id1217.hwapi;
 
+/**
+ * Enum representing the different door actions.
+ */
 public enum DoorAction {
 
     DoorClose(-1), DoorOpen(1), DoorStop(0);

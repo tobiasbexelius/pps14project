@@ -1,6 +1,10 @@
 package se.kth.id1217.hwapi;
 
+/**
+ * Details about the position event.
+ */
 public class CabinPositionDesc {
+
     private final int cabin;
     private final double position;
 

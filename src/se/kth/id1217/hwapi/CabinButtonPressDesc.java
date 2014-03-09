@@ -1,7 +1,12 @@
 package se.kth.id1217.hwapi;
 
+/**
+ * Details about the cabin button press event.
+ */
 public class CabinButtonPressDesc {
+
     private static final int EMERGENCY_STOP = 32000;
+
     private final int cabin;
     private final int floor;
 
