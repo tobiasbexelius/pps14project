@@ -77,9 +77,11 @@ public class ElevatorController implements Runnable {
 
     private boolean floorAlongCurrentRoute(int floor) {
         int turningFloor = getTurningFloor();
-        return (goingUp() && turningFloor >= floor && elevator.getPosition() <= floor)
-                || (goingDown() && turningFloor <= floor && elevator
-                        .getPosition() >= floor);
+        boolean floorAlongRouteUp = goingUp() && turningFloor >= floor
+                && (elevator.isAtFloor(floor) || elevator.isFloorAbove(floor));
+        boolean floorAlongRouteDown = goingDown() && turningFloor <= floor
+                && (elevator.isAtFloor(floor) || elevator.isFloorBelow(floor));
+        return floorAlongRouteUp || floorAlongRouteDown;
     }
 
     private boolean goingDown() {
