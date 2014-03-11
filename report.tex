@@ -38,7 +38,10 @@ We decided to implement the controller application in Java, since it is a
 language we both felt comfortable with. This also allowed us to utilize classes
 from the extensive Java Standard Library and to develop the program using the
 Eclipse IDE. We mainly developed the controller application in our laptops,
-which both run a recent edition of the GNU/Linux Ubuntu OS.
+which both run a recent edition of the GNU/Linux Ubuntu OS. For communication 
+with the simulator we decided to use TCP sockets rather than Java RMI because we
+have experience with Java's socket API, but not with Java RMI. By making this 
+choice we could focus more on other issues.
 
 \begin{figure}[h!]
     \centering
