@@ -121,7 +121,7 @@ public class ElevatorController implements Runnable {
         return currentMotorAction == MotorAction.MotorStop;
     }
 
-    public synchronized void addCommand(FloorCommand floorCommand) {
+    public void addCommand(FloorCommand floorCommand) {
         if (!commandQueue.contains(floorCommand)
                 && !(elevator.isAtFloor(floorCommand.getFloor()) && isStopped())) {
             commandQueue.add(floorCommand);

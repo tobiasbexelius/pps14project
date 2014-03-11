@@ -41,7 +41,7 @@ public class SocketHardwareController implements HardwareController {
      * 
      * @param listener
      */
-    public synchronized void addHardwareListener(HardwareListener listener) {
+    public void addHardwareListener(HardwareListener listener) {
         listeners.add(listener);
     }
 
@@ -56,7 +56,7 @@ public class SocketHardwareController implements HardwareController {
      * @throws IOException
      *             On IO errors.
      */
-    public synchronized void connect(String host, int port) throws IOException {
+    public void connect(String host, int port) throws IOException {
         socket = new Socket(host, port);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintStream(socket.getOutputStream());
