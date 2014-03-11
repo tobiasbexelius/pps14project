@@ -210,4 +210,18 @@ close to what we would expect.
 % learned from the assignment and any problems you may have encountered. You
 % are also welcome to suggest changes to the assignment in order to improve it.
 
+In the approximately 48 man-hours we spent on this project, we have managed to
+develop a functional elevator controller program that makes reasonable
+scheduling decisions. The program is, as far as we can tell, free of any major
+synchronization issues or scheduling bugs. There are certainly more improvements
+to be made, such as refining the cost function to improve scheduling or
+refactoring the code to make it more readable, but that will have to be left for
+later.
+
+The main takeaway from this assignment is that writing multithreaded software is
+hard, and coupled with the requirement to control the elevator in real-time,
+this project turned out to be quite a challenge. During the development process
+we encountered numerous bugs, many (at least in part) due to these two
+qualities.
+
 \end{document}
