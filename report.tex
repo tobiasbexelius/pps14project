@@ -162,8 +162,13 @@ presented on the course
 webpage\footnote{\url{http://www.it.kth.se/courses/ID1217/labs/task1.html}}.
 Results are listed in table~\ref{tab:acceptance_test_results}.
 
-It is worth noting that for some test cases, for instance test 1.2, the expected
-behavior is not obvious.
+It is worth noting that for some test cases, for instance test 1.2 with one
+elevator, the expected behavior is not obvious. One could argue that the
+expected behavior should be stopping at floors 3, 2, 3 and 2, since the requests
+are for opposite directions. On the other hand, since there is only one
+elevator, one might as well pick up all passengers when stopping on a floor. The
+only difference is that they now have to wait inside the elevator instead of
+outside (and the elevator no longer jumps between the floors).
 
 \begin{table}[h]
     \begin{tabular}{| l | c | p{4.7cm} | p{4.7cm} |}
