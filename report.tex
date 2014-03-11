@@ -30,14 +30,7 @@
 \section{Introduction}
 
 Our task was to design, implement and evaluate a controller for a simulated set
-of elevators, see figure \ref{fig:hardware_control_panel}.
-
-\begin{figure}[p]
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/elevators_5_6.png}
-    \caption{The hardware control panel.}
-    \label{fig:hardware_control_panel}
-\end{figure}
+of elevators. This controller was to be implemented as a multithreaded application compatible with a provided elevator simulator. The controller should communicate with the simulator by sending instructions to the simulator and requesting updates about the states of the elevator at a rather low level, for example start/stop the motor, update the scale, or open/close the doors. This communication can be implemented via TCP sockets, or Java RMI. Goals of the controller implementations were to provide fairness and to minimize service time and power consumption. The simulator's GUI is displayed in figure \ref{fig:hardware_control_panel}.
 
 \section{Implementation}
 
@@ -46,6 +39,13 @@ language we both felt comfortable with. This also allowed us to utilize classes
 from the extensive Java Standard Library and to develop the program using the
 Eclipse IDE. We mainly developed the controller application in our laptops,
 which both run a recent edition of the GNU/Linux Ubuntu OS.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/elevators_5_6.png}
+    \caption{The hardware control panel.}
+    \label{fig:hardware_control_panel}
+\end{figure}
 
 \subsection{Structure}
 
