@@ -33,7 +33,7 @@ public class ElevatorController implements Runnable {
 
     /**
      * Creates a new elevator controller.
-     *
+     * 
      * @param hwc
      *            A hardware controller.
      * @param elevator
@@ -52,7 +52,8 @@ public class ElevatorController implements Runnable {
         double cost = 0.0;
         final int floorTo = fbpd.getFloor();
 
-        if (elevator.isAtFloor(floorTo) && commandQueue.isEmpty() && elevator.isDoorOpen()) {
+        if (elevator.isAtFloor(floorTo) && commandQueue.isEmpty()
+                && elevator.isDoorOpen()) {
             cost += BONUS_STOPPED_AT_FLOOR;
         }
 
@@ -92,8 +93,19 @@ public class ElevatorController implements Runnable {
     }
 
     private boolean goingDown() {
-        return !commandQueue.isEmpty()
-                && elevator.isFloorBelow(commandQueue.peek().getFloor());
+        FloorCommand fc = getNextFloorCommand();
+        return fc != null && elevator.isFloorBelow(fc.getFloor());
+    }
+
+    private FloorCommand getNextFloorCommand() {
+        for (FloorCommand fc : commandQueue) {
+            if (elevator.isAtFloor(fc.getFloor())) {
+                continue;
+            }
+            return fc;
+        }
+
+        return null;
     }
 
     private boolean isActive() {
@@ -101,8 +113,8 @@ public class ElevatorController implements Runnable {
     }
 
     private boolean goingUp() {
-        return !commandQueue.isEmpty()
-                && elevator.isFloorAbove(commandQueue.peek().getFloor());
+        FloorCommand fc = getNextFloorCommand();
+        return fc != null && elevator.isFloorAbove(fc.getFloor());
     }
 
     private boolean isStopped() {
@@ -209,8 +221,8 @@ public class ElevatorController implements Runnable {
             // Floor matches
             if (fc.getFloor() == floor) {
                 // Direction matches
-                if (fc.getType() == null || type == null
-                        || fc.getType() == type) {
+                if (fc == commandQueue.getFirst() || fc.getType() == null
+                        || type == null || fc.getType() == type) {
                     commands.add(fc);
                 }
             }
