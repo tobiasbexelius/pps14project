@@ -56,23 +56,21 @@ a more detailed description, see the corresponding JavaDoc.
 % Describe your implementation (functions, classes, interfaces).
 \begin{description}
 
-\item[\texttt{se.kth.id1217.Main}] The main entry point to the controller
-    program. Parses command line parameters, sets up the network connection and
-    passes control over to \texttt{se.kth.id1217.MasterController}.
+\item[\texttt{Main}] The main entry point to the controller program. Parses
+    command line parameters, sets up the network connection and passes control
+    over to \texttt{MasterController}.
 
-\item[\texttt{se.kth.id1217.MasterController}] Receives messages from the
-    hardware. Decides which elevator should respond to floor button presses and
-    passes cabin button presses onto an instance of
-    \texttt{se.kth.id1217.ElevatorController}.
+\item[\texttt{MasterController}] Receives messages from the hardware. Decides
+    which elevator should respond to floor button presses and passes cabin
+    button presses onto an instance of \texttt{ElevatorController}.
 
-\item[\texttt{se.kth.id1217.ElevatorController}] The control unit for one of the
-    elevators. Each elevator has a separate instance of this class. Manages the
-    route for this elevator and controls the motors. This class contains most of
-    the important logic.
+\item[\texttt{ElevatorController}] The control unit for one of the elevators.
+    Each elevator has a separate instance of this class. Manages the route for
+    this elevator and controls the motors. This class contains most of the
+    important logic.
 
-\item[\texttt{se.kth.id1217.hwapi.SocketHardwareController}] The main component
-    of our port of the C hardware API. Handles communication with the hardware
-    via a TCP socket.
+\item[\texttt{SocketHardwareController}] The main component of our port of the C
+    hardware API. Handles communication with the hardware via a TCP socket.
 
 \end{description}
 
