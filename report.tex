@@ -78,28 +78,68 @@ a more detailed description, see the corresponding JavaDoc.
 % Describe algorithms you have developed (chosen), synchronization or/and
 % communication mechanisms you have used, and explain motivation for your design
 % choices.
-In this section, important algorithms used in the project are described. More specifically, the way an elevator is chosen to service a floor button press, the way an individual elevator is controlled will be described, followed by a description of the synchronization and communication mechanisms used.
+In this section, important algorithms used in the project are described. More
+specifically the way an elevator is chosen to service a floor button press and
+the way an individual elevator is controlled, followed by synchronization
+mechanisms used.
 
 \subsubsection{Choosing an elevator}
-As mentioned above, the MasterController class is responsible for choosing which elevator will service a floor button press. This is done by implementing a heuristic for determining the cost for an elevator to service a request, based on the nature of the request and the elevator's current state. This cost function is located in the ElevatorController class. When the MasterController receives a request it calls the cost function of each ElevatorController and assigns the task to the elevator with the least cost by adding it to the end of that elevator's command queue.
 
-The cost of a request starts at 0 and based on the request and the state of the elevator, cost is added and subtracted in the following manner:
+As mentioned above, the \texttt{MasterController} class is responsible for
+choosing which elevator will service a floor button press. This is done by using
+a heuristic for determining the cost for an elevator to service a request based
+on the nature of the request and the elevator's current state. This cost
+function is located in the \texttt{ElevatorController} class. When the
+\texttt{MasterController} receives a request it calls the cost function of each
+\texttt{ElevatorController} and assigns the task to the elevator with the least
+cost by adding it to the end of that elevator's command queue.
+
+The cost of a request starts at $0$ and based on the request and the state of
+the elevator, costs are added and subtracted in the following manner.
+
 \begin{itemize}
-\item A cost of COST is added to elevators that are currently active. This is because elevators that are not active can begin to serve the request immediately, which may reduce waiting time.
-\item A cost of COST is added to elevators that are currently active and are moving away from the floor where the request was made. This is because the elevator will need to turn after it has finished its current task, which mean that waiting time will probably be long.
-\item A cost of COST is subtracted if the request can be processed along the way, for instance if an elevator is heading upwards and the  up-button is pressed on a floor that the elevator will pass before changing direction.
-\item TODO lägg till mer?
-\end{itemize} 
+\item A cost of $1500$ is subtracted from elevators that are currently stationary
+    at the requested floor without any pending commands in their queue.
+\item A cost of $10$ is added to elevators that are currently active. This is
+    because elevators that are not active can begin to serve the request
+    immediately, which may reduce waiting time.
+\item A cost of $5$ is added to elevators that are currently active and are
+    moving away from the floor where the request was made. This is because the
+    elevator will need to turn after it has finished its current task, which
+    mean that waiting time will probably be long.
+\item A cost of $15$ is subtracted if the request can be processed along the
+    way, for instance if an elevator is heading upwards and the up-button is
+    pressed on a floor that the elevator will pass before changing direction.
+\item Finally a cost equal to the distance from the elevator to the desired
+    floor is added. This is to make it so the closest elevator is always chosen,
+    should there be multiple options.
+\end{itemize}
 
 \subsubsection{Controlling an elevator}
 
-Each elevator is controlled by an instance of the ElevatorController class. Each ElevatorController has a queue of commands which contains tasks that has been assigned to it. This includes all button presses made inside the cabin and all floor button presses which has been assigned to it by the master controller. The elevator controller performs tasks by looking at the first item in the queue, and then starts to process that task without removing it from the queue. That is done by closing the doors if needed and then starting the motors in the direction of the requested floor. Then, the controller will repeatedly sleep and poll the elevator's position and update the scale. If the elevator is at a floor and that floor is in the queue of commands, the elevator will stop, and remove that command from the queue. ÄR DETTA RÄTT? -> However floor button presses that are in the wrong direction (for instance if the elevator's current task is to continue up past a floor when the down floor button is pressed on that floor) will not cause the elevator to stop, and will remain in the queue. When the elevator has stopped at a floor, the whole process is repeated. This way, the priority of the elevator is always to process the first task, but if possible it will handle other tasks along the way, which greatly improves service time in certain scenarios.
+Each elevator is controlled by an instance of the \texttt{ElevatorController}
+class. Each \texttt{ElevatorController} has a queue of tasks that have been
+assigned to it. This includes all button presses made inside the cabin and all
+floor button presses which has been assigned to it by the master controller.
 
+The elevator controller performs tasks by looking at the first item in the queue
+and then starts to process that task without removing it from the queue.
+Processing a task means closing the doors if needed and then starting the motors
+in the direction of the requested floor. Then the controller will repeatedly
+sleep and poll the elevator's position and update the scale. If the elevator is
+at a floor and that floor is in the queue of commands, the elevator will stop
+and remove that command from the queue. However, floor button presses that are
+in the wrong direction (for instance if the elevator's current task is to
+continue up past a floor when the down floor button is pressed on that floor)
+will not cause the elevator to stop, and will remain in the queue. When the
+elevator has stopped at a floor, the whole process is repeated. This way, the
+priority of the elevator is always to process the first task, but if possible it
+will handle other tasks along the way, which greatly improves service time in
+certain scenarios.
 
 \subsection{Synchronization mechanisms}
 % Explanation of synchronization mechanisms used in implementation (which mechanism, where and why).
-Shared datastructures, semaphores, synchronized methods(monitors??) 
-
+Shared datastructures, semaphores, synchronized methods(monitors??)
 
 \section{Evaluation}
 % Present and explain your performance evaluation results, if any.
