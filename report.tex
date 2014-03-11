@@ -30,18 +30,27 @@
 \section{Introduction}
 
 Our task was to design, implement and evaluate a controller for a simulated set
-of elevators. This controller was to be implemented as a multithreaded application compatible with a provided elevator simulator. The controller was to communicate with the simulator by sending instructions to the simulator and requesting updates about the states of the elevator at a rather low level, for example start/stop the motor, update the scale, or open/close the doors. This communication could be implemented via TCP sockets, or Java RMI. The controller was required to provide fairness and a goal was to minimize service time and power consumption. The simulator's GUI can be seen in figure \ref{fig:hardware_control_panel}.
+of elevators. The controller was to be implemented as a multithreaded
+application compatible with a provided elevator simulator, hereinafter referred
+to as \emph{the hardware}. The controller was to communicate with the hardware
+by sending instructions to the hardware and requesting updates about the states
+of the elevator at a rather low level, for example start/stop the motor, update
+the scale, or open/close the doors. This communication could be implemented via
+TCP sockets or Java RMI. The controller was required to provide fairness and
+goals were to minimize service time and power consumption. The hardware's GUI
+can be seen in figure \ref{fig:hardware_control_panel}.
 
 \section{Implementation}
 
 We decided to implement the controller application in Java, since it is a
 language we both felt comfortable with. This also allowed us to utilize classes
 from the extensive Java Standard Library and to develop the program using the
-Eclipse IDE. We mainly developed the controller application in our laptops,
-which both run a recent edition of the GNU/Linux Ubuntu OS. For communication 
+Eclipse IDE. We mainly developed the controller application on our laptops,
+which both run a recent edition of the GNU/Linux Ubuntu OS. For communication
 with the simulator we decided to use TCP sockets rather than Java RMI because we
-have experience with Java's socket API, but not with Java RMI. By making this 
-choice we could focus more on other issues.
+have more experience with Java's socket API than with Java RMI. Making this
+decision allowed us to focus more on controller algorithms and less on the
+hardware API.
 
 \begin{figure}[h!]
     \centering
@@ -142,11 +151,27 @@ certain scenarios.
 
 \subsubsection{Synchronization mechanisms}
 % Explanation of synchronization mechanisms used in implementation (which mechanism, where and why).
-In this implementation shared data structures, semaphores and synchronized methods were used to synchronize threads.
+In this implementation shared data structures, semaphores and synchronized
+methods were used to synchronize threads.
+
 \begin{itemize}
-\item Shared data structures are used in form of the command queues for each \texttt{ElevatorController}. Commands are added to the queue by the \texttt{MasterController} thread via the \texttt{ElevatorController}'s \texttt{addCommand} method. Commands are then read and processed by the corresponding \texttt{ElevatorController} thread.
-\item Semaphores were used to notify the elevator that there are new commands in the requests in the queue. The semaphore is initialized to zero. A permit is added each time an element is added to the queue, and remove when a request is processed.
-\item Synchronized methods are used in several classes to avoid mutual exclusion from critical sections. For example in the Elevator class, which represents the state of an elevator. Here, synchronization is required because the \texttt{MasterController} thread updates the state, and the \texttt{ElevatorController} thread of the corresponding elevator reads the state. Synchronized methods are also used in the \texttt{SocketHardwareController}ge.
+\item Shared data structures are used in form of the command queues for each
+    \texttt{ElevatorController}. Commands are added to the queue by the
+    \texttt{MasterController} thread via the \texttt{ElevatorController}'s
+    \texttt{addCommand} method. Commands are then read and processed by the
+    corresponding \texttt{ElevatorController} thread.
+\item A semaphores in each \texttt{ElevatorController} is used to notify the
+    controller that there might be new commands in its queue. The semaphore is
+    initialized to zero, as the queues are all initially empty. The semaphore is
+    released each time an element is added to the queue, and waited for before a
+    request is taken from the queue and processed.
+\item Synchronized methods are used in several classes to ensure mutual
+    exclusion for critical sections. For example in the Elevator class, which
+    represents the state of an elevator. Here, synchronization is required
+    because the \texttt{MasterController} thread updates the state, and the
+    \texttt{ElevatorController} thread of the corresponding elevator reads the
+    state. Synchronized methods are also used in
+    \texttt{SocketHardwareController}.
 \end{itemize}
 
 \section{Evaluation}
@@ -163,7 +188,9 @@ discover a number of synchronization bugs and other glitches.
 For the second kind of testing, acceptance testing, we used the use cases
 presented on the course
 webpage\footnote{\url{http://www.it.kth.se/courses/ID1217/labs/task1.html}}.
-Results are listed in table~\ref{tab:acceptance_test_results}.
+Results are listed in table~\ref{tab:acceptance_test_results}. Although not
+presented in the table, we have also made several other tests with good results,
+for example with five simultaneous elevators.
 
 It is worth noting that for some test cases, for instance test 1.2 with one
 elevator, the expected behavior is not obvious. One could argue that the
@@ -172,9 +199,6 @@ are for opposite directions. On the other hand, since there is only one
 elevator, one might as well pick up all passengers when stopping on a floor. The
 only difference is that they now have to wait inside the elevator instead of
 outside (and the elevator no longer jumps between the floors).
-
-Although not presented in the table, we have also made several other tests with
-good results, for example with five simultaneous elevators.
 
 \begin{table}[h]
     \begin{tabular}{| l | c | p{4.7cm} | p{4.7cm} |}
