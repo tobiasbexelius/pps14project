@@ -50,7 +50,8 @@ which both run a recent edition of the GNU/Linux Ubuntu OS.
 \subsection{Structure}
 
 The controller application consists of a set of classes with different
-responsibilities.
+responsibilities. Some of the important classes are described briefly below. For
+a more detailed description, see the corresponding JavaDoc.
 
 % Describe your implementation (functions, classes, interfaces).
 \begin{description}
@@ -66,7 +67,12 @@ responsibilities.
 
 \item[\texttt{se.kth.id1217.ElevatorController}] The control unit for one of the
     elevators. Each elevator has a separate instance of this class. Manages the
-    route for this elevator and controls the motors.
+    route for this elevator and controls the motors. This class contains most of
+    the important logic.
+
+\item[\texttt{se.kth.id1217.hwapi.SocketHardwareController}] The main component
+    of our port of the C hardware API. Handles communication with the hardware
+    via a TCP socket.
 
 \end{description}
 
