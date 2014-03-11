@@ -30,7 +30,7 @@
 \section{Introduction}
 
 Our task was to design, implement and evaluate a controller for a simulated set
-of elevators. This controller was to be implemented as a multithreaded application compatible with a provided elevator simulator. The controller should communicate with the simulator by sending instructions to the simulator and requesting updates about the states of the elevator at a rather low level, for example start/stop the motor, update the scale, or open/close the doors. This communication can be implemented via TCP sockets, or Java RMI. Goals of the controller implementations were to provide fairness and to minimize service time and power consumption. The simulator's GUI is displayed in figure \ref{fig:hardware_control_panel}.
+of elevators. This controller was to be implemented as a multithreaded application compatible with a provided elevator simulator. The controller was to communicate with the simulator by sending instructions to the simulator and requesting updates about the states of the elevator at a rather low level, for example start/stop the motor, update the scale, or open/close the doors. This communication could be implemented via TCP sockets, or Java RMI. The controller was required to provide fairness and a goal was to minimize service time and power consumption. The simulator's GUI can be seen in figure \ref{fig:hardware_control_panel}.
 
 \section{Implementation}
 
