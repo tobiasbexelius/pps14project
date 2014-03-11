@@ -139,7 +139,12 @@ certain scenarios.
 
 \subsection{Synchronization mechanisms}
 % Explanation of synchronization mechanisms used in implementation (which mechanism, where and why).
-Shared datastructures, semaphores, synchronized methods(monitors??)
+In this implementation shared data structures, semaphores and synchronized methods were used to synchronize threads.
+\begin{itemize}
+\item Shared data structures are used in form of the command queues for each \texttt{ElevatorController}. Commands are added to the queue by the \textt{MasterController} thread via the \texttt{ElevatorController}'s \textt{addCommand} method. Commands are then read and processed by the corresponding \texttt{ElevatorController} thread.
+\item Semaphores were used to notify the elevator that there are new commands in the requests in the queue. The semaphore is initialized to zero. A permit is added each time an element is added to the queue, and remove when a request is processed.
+\item Synchronized methods are used in several classes to avoid mutual exclusion from critical sections. For example in the Elevator class, which represents the state of an elevator. Here, synchronization is required because the \textt{MasterController} thread updates the state, and the \texttt{ElevatorController} thread of the corresponding elevator reads the state. Synchronized methods are also used in the \textt{SocketHardwareController}.
+\end{itemize}
 
 \section{Evaluation}
 % Present and explain your performance evaluation results, if any.
